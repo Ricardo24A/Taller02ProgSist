@@ -1,31 +1,28 @@
+# Variables
 CC = gcc
-CFLAGS = -Wall -g -I.
+CFLAGS = -Wall
 OBJ = persona.o institucion.o reporte.o main.o
-HEADERS = miLibPersona.h miLibInstitucion.h miReporte.h
-EXEC = programa
+DEPS = miLibPersona.h miLibInstitucion.h miReporte.h
 
-# Regla principal para generar el ejecutable
-$(EXEC): $(OBJ)
-	$(CC) $(OBJ) -o $(EXEC)
+programa: $(OBJ)
+	$(CC) $(CFLAGS) -o programa $(OBJ)
 
-# Regla de patrón para generar archivos objeto
-%.o: %.c $(HEADERS)
-	$(CC) $(CFLAGS) -c $< -o $@
+# Regla para compilar y agregar depencias si no las hay al main.c
+main.o: main.c $(DEPS)
+	$(CC) $(CFLAGS) -c main.c
 
-# Reglas individuales para archivos objeto (opcional si no quieres usar regla de patrón)
+# Regla para compilar y agregar depencias si no las hay a persona.c
 persona.o: persona.c miLibPersona.h miLibInstitucion.h
-	$(CC) $(CFLAGS) -c persona.c -o persona.o
+	$(CC) $(CFLAGS) -c persona.c
 
+# Regla para compilar y agregar depencias si no las hay a institucion.c
 institucion.o: institucion.c miLibPersona.h miLibInstitucion.h
-	$(CC) $(CFLAGS) -c institucion.c -o institucion.o
+	$(CC) $(CFLAGS) -c institucion.c
 
-reporte.o: reporte.c miLibPersona.h miLibInstitucion.h miReporte.h
-	$(CC) $(CFLAGS) -c reporte.c -o reporte.o
+# Regla para compilar y agregar depencias si no las hay a reporte.c
+reporte.o: reporte.c $(DEPS)
+	$(CC) $(CFLAGS) -c reporte.c
 
-main.o: main.c miLibPersona.h miLibInstitucion.h miReporte.h
-	$(CC) $(CFLAGS) -c main.c -o main.o
-
-# Regla de limpieza de archivos
 .PHONY: clean
 clean:
-	rm -f $(OBJ) $(EXEC)
+	rm -f *.o programa
